@@ -1,0 +1,21 @@
+{
+  "name": "freerice-automation",
+  "version": "1.0.0",
+  "main": "./dist/app.js",
+  "repository": "https://github.com/sujang958/freerice-automation",
+  "author": "sujang958 <enter7377@naver.com>",
+  "license": "MIT",
+  "scripts": {
+    "test": "ts-node app.ts"
+  },
+  "devDependencies": {
+    "@types/node": "^18.0.0",
+    "playwright": "^1.22.2",
+    "ts-node": "^10.8.1",
+    "typescript": "^4.7.4"
+  },
+  "dependencies": {
+    "dotenv": "^16.0.1",
+    "log4js": "^6.5.2"
+  }
+}

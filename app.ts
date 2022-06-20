@@ -5,7 +5,7 @@ import "dotenv/config"
 
 Log4js.configure({
   appenders: { log: { type: "file", filename: "run.log" } },
-  categories: {},
+  categories: { default: { appenders: ["log"], level: "all" } },
 })
 
 const logger = Log4js.getLogger("log")
@@ -32,6 +32,8 @@ const run = async () => {
 
   await page.waitForSelector(`text=${process.env.USER_NAME}`)
   await page.waitForTimeout(1000) // For safety
+
+  logger.info(`Logined as ${process.env.USER_NAME}`)
 
   await page.goto("https://freerice.com/categories/english-vocabulary")
   await page.waitForSelector(

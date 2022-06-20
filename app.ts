@@ -1,7 +1,8 @@
 import { webkit } from "playwright"
 import Log4js from "log4js"
+import { config } from "dotenv"
 
-import "dotenv/config"
+config()
 
 Log4js.configure({
   appenders: { log: { type: "file", filename: "run.log" } },
@@ -49,14 +50,14 @@ const run = async () => {
     )
     await page.waitForTimeout(1000)
     logger.info("Clicked")
-    
+
     if (i >= 29) {
-       await page.goto("https://freerice.com/categories/english-vocabulary")
-       await page.waitForSelector(
-         "#root > section > div > div:nth-child(1) > div > div > div.game-block > div.question.question--single-option > div > div > div > div > div > div:nth-child(2) > div"
-       )
-       await page.waitForTimeout(500)
-       i = 0;
+      await page.goto("https://freerice.com/categories/english-vocabulary")
+      await page.waitForSelector(
+        "#root > section > div > div:nth-child(1) > div > div > div.game-block > div.question.question--single-option > div > div > div > div > div > div:nth-child(2) > div"
+      )
+      await page.waitForTimeout(500)
+      i = 0
     }
   }
 }

@@ -41,12 +41,23 @@ const run = async () => {
   )
   await page.waitForTimeout(500)
 
+  let i = 0
   while (true) {
+    i += 1
     await page.click(
       "#root > section > div > div:nth-child(1) > div > div > div.game-block > div.question.question--single-option > div > div > div > div > div > div:nth-child(2) > div"
     )
     await page.waitForTimeout(1000)
     logger.info("Clicked")
+    
+    if (i >= 29) {
+       await page.goto("https://freerice.com/categories/english-vocabulary")
+       await page.waitForSelector(
+         "#root > section > div > div:nth-child(1) > div > div > div.game-block > div.question.question--single-option > div > div > div > div > div > div:nth-child(2) > div"
+       )
+       await page.waitForTimeout(500)
+       i = 0;
+    }
   }
 }
 

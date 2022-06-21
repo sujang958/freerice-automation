@@ -18,7 +18,7 @@ const run = async () => {
   const browser = await webkit.launch({
     headless: process.env.NODE_ENV === "production" ? true : false,
   })
-  const page = await browser.newPage()
+  const page = await browser.newPage({ ignoreHTTPSErrors: true })
 
   errorRestartEmitter.once("error", async () => {
     await browser.close()

@@ -1,8 +1,11 @@
-import { webkit } from "playwright"
+import { errors, webkit } from "playwright"
 import Log4js from "log4js"
 import { config } from "dotenv"
+import { EventEmitter } from "stream"
 
 config()
+
+const errorRestartEmitter = new EventEmitter()
 
 Log4js.configure({
   appenders: { log: { type: "file", filename: "run.log" } },
@@ -16,6 +19,11 @@ const run = async () => {
     headless: process.env.NODE_ENV === "production" ? true : false,
   })
   const page = await browser.newPage()
+
+  errorRestartEmitter.once("error", async () => {
+    await browser.close()
+    run()
+  })
 
   await page.goto("https://freerice.com/profile-login")
   await page.waitForLoadState("domcontentloaded")
@@ -36,35 +44,35 @@ const run = async () => {
 
   logger.info(`Logined as ${process.env.USER_NAME}`)
 
-  await page.goto("https://freerice.com/categories/english-vocabulary")
+  await page.goto("https://freerice.com/categories/english-grammar")
   await page.waitForSelector(
-    "#root > section > div > div:nth-child(1) > div > div > div.game-block > div.question.question--single-option > div > div > div > div > div > div:nth-child(2) > div"
+    "div.fade-appear-done:nth-child(2) > div:nth-child(1)"
   )
   await page.waitForTimeout(500)
 
-  let i = 0
   while (true) {
-    i += 1
     await page.click(
-      "#root > section > div > div:nth-child(1) > div > div > div.game-block > div.question.question--single-option > div > div > div > div > div > div:nth-child(2) > div"
+      "div.fade-appear-doned:nth-child(2) > div:nth-child(1)", //
+      {
+        timeout: 1000 * 5,
+      }
     )
-    await page.waitForTimeout(1000)
+    await page.waitForSelector(
+      "div.fade-appear-done:nth-child(2) > div:nth-child(1)"
+    )
+    await page.waitForTimeout(100)
+    console.log("click")
     logger.info("Clicked")
-
-    if (i >= 29) {
-      await page.goto("https://freerice.com/categories/english-vocabulary")
-      await page.waitForSelector(
-        "#root > section > div > div:nth-child(1) > div > div > div.game-block > div.question.question--single-option > div > div > div > div > div > div:nth-child(2) > div"
-      )
-      await page.waitForTimeout(500)
-      i = 0
-    }
   }
 }
+
+console.log("Starting a automation")
 
 run()
 
 process.on("uncaughtException", (error) => {
+  if (error instanceof errors.TimeoutError) errorRestartEmitter.emit("error")
+
   console.log(error)
   logger.error(`${error.name} - ${error.message}`)
 })

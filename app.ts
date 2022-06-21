@@ -23,6 +23,7 @@ const run = async () => {
   errorRestartEmitter.once("error", async () => {
     await browser.close()
     run()
+    logger.info("Restarted for error")
   })
 
   await page.goto("https://freerice.com/profile-login")
@@ -61,7 +62,6 @@ const run = async () => {
       "div.fade-appear-done:nth-child(2) > div:nth-child(1)"
     )
     await page.waitForTimeout(100)
-    console.log("click")
     logger.info("Clicked")
   }
 }

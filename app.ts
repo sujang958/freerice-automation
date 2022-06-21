@@ -53,7 +53,7 @@ const run = async () => {
 
   while (true) {
     await page.click(
-      "div.fade-appear-doned:nth-child(2) > div:nth-child(1)", //
+      "div.fade-appear-done:nth-child(2) > div:nth-child(1)", //
       {
         timeout: 1000 * 5,
       }

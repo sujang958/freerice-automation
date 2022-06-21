@@ -6,7 +6,9 @@
   "author": "sujang958 <enter7377@naver.com>",
   "license": "MIT",
   "scripts": {
-    "test": "ts-node app.ts"
+    "test": "ts-node app.ts",
+    "build": "tsc",
+    "start": "node ./dist/app.js"
   },
   "devDependencies": {
     "@types/node": "^18.0.0",

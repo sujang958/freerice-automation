@@ -28,7 +28,7 @@ const run = () => __awaiter(void 0, void 0, void 0, function* () {
     const browser = yield playwright_1.webkit.launch({
         headless: process.env.NODE_ENV === "production" ? true : false,
     });
-    const page = yield browser.newPage();
+    const page = yield browser.newPage({ ignoreHTTPSErrors: true });
     errorRestartEmitter.once("error", () => __awaiter(void 0, void 0, void 0, function* () {
         yield browser.close();
         run();
@@ -62,8 +62,7 @@ const run = () => __awaiter(void 0, void 0, void 0, function* () {
 console.log("Starting a automation");
 run();
 process.on("uncaughtException", (error) => {
-    if (error instanceof playwright_1.errors.TimeoutError)
-        errorRestartEmitter.emit("error");
+    errorRestartEmitter.emit("error");
     console.log(error);
     logger.error(`${error.name} - ${error.message}`);
 });

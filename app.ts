@@ -71,8 +71,7 @@ console.log("Starting a automation")
 run()
 
 process.on("uncaughtException", (error) => {
-  if (error instanceof errors.TimeoutError) errorRestartEmitter.emit("error")
-
+  errorRestartEmitter.emit("error")
   console.log(error)
   logger.error(`${error.name} - ${error.message}`)
 })

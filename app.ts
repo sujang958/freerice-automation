@@ -20,10 +20,12 @@ const run = async () => {
   })
   const page = await browser.newPage({ ignoreHTTPSErrors: true })
 
+  logger.info("Started a browser and page")
+
   errorRestartEmitter.once("error", async () => {
-    await browser.close()
+    logger.info("Restarting for error")
     run()
-    logger.info("Restarted for error")
+    await browser.close()
   })
 
   await page.goto("https://freerice.com/profile-login")
@@ -55,7 +57,7 @@ const run = async () => {
     await page.click(
       "div.fade-appear-done:nth-child(2) > div:nth-child(1)", //
       {
-        timeout: 1000 * 5,
+        timeout: 1000 * 12,
       }
     )
     await page.waitForSelector(
@@ -66,7 +68,7 @@ const run = async () => {
   }
 }
 
-console.log("Starting a automation")
+console.log("Starting a automation", Date.toString())
 
 run()
 

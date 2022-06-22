@@ -3,6 +3,7 @@ FROM mcr.microsoft.com/playwright:v1.22.0-focal
       apt-get update && \
       apt-get install -y curl nano
   
+  RUN mkdir /usr/local/nvm
   ENV NVM_DIR /usr/local/nvm
 
   # Install nvm

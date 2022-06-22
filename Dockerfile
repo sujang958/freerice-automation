@@ -1,4 +1,4 @@
-FROM ubuntu:20.04 
+FROM mcr.microsoft.com/playwright:v1.22.0-focal
 
   RUN \
       apt-get update && \
@@ -12,7 +12,7 @@ FROM ubuntu:20.04
   RUN nvm install v18.3.0
   RUN npm i -g yarn pm2
 
-  # COPY package.json /freerice/package.json
-  # COPY dist/app.js /freerice/app.js
+  COPY package.json /freerice/package.json
+  COPY dist/app.js /freerice/app.js
 
   ENV NODE_ENV=production

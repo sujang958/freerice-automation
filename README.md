@@ -10,3 +10,4 @@
 
 - MacOS Mojave or later
 - Ubuntu 18.04 or 20.04
+- Windows and WSL are supported

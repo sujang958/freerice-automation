@@ -14,12 +14,12 @@ FROM mcr.microsoft.com/playwright:v1.22.0-focal
   RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash
   RUN source $NVM_DIR/nvm.sh && nvm install v18.3.0 && npm i -g yarn pm2
 
-  COPY bootstrap.sh app.ts package.json yarn.lock tsconfig.json .env /freerice/
+  WORKDIR /freerice/
 
-  RUN cd /freerice && yarn && yarn build
+  COPY bootstrap.sh app.ts package.json yarn.lock tsconfig.json .env ./
+
+  RUN yarn && yarn build
 
   ENV NODE_ENV=production
 
   CMD pm2-runtime start /freerice/dist/app.js
-
-  CMD ["/freerice/bootstrap.sh", "-d"]

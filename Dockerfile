@@ -22,4 +22,4 @@ FROM mcr.microsoft.com/playwright:v1.22.0-focal
 
   ENV NODE_ENV=production
 
-  CMD pm2-runtime start /freerice/dist/app.js
+  CMD ["pm2-runtime", "start", "/freerice/dist/app.js"]

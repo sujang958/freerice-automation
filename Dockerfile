@@ -14,5 +14,8 @@ FROM mcr.microsoft.com/playwright:v1.22.0-focal
 
   COPY package.json /freerice/package.json
   COPY dist/app.js /freerice/app.js
+  COPY .env /freerice/.env
 
   ENV NODE_ENV=production
+
+  RUN cd /freerice/ && yarn && pm2 start ./app.js --name=app1

@@ -28,10 +28,14 @@ const run = async () => {
     await browser.close()
   })
 
-  page.on("domcontentloaded", async (page) => {
-    if (!(await page.isVisible("div.closed-button.clickable"))) return
-    await page.click("div.close-button.clickable")
+  const closingPopupInterval = setInterval(async () => {
+    if (!(await page.isVisible(".close-button.clickable"))) return
+    await page.click(".close-button.clickable")
     logger.info("Closed a popup")
+  }, 800)
+
+  process.on("beforeExit", () => {
+    clearInterval(closingPopupInterval)
   })
 
   await page.goto("https://freerice.com/profile-login")
@@ -44,9 +48,7 @@ const run = async () => {
 
   await page.type("#login-username", process.env.USER_NAME ?? "")
   await page.fill("#login-password", process.env.USER_PW ?? "")
-  await page.click(
-    "#root > section > div > div:nth-child(1) > div > div.page__body > div > div > div:nth-child(5) > button"
-  )
+  await page.click("button.user-login-submit")
 
   await page.waitForSelector(`text=${process.env.USER_NAME}`)
   await page.waitForTimeout(1000) // For safety

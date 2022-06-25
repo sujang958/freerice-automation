@@ -5,6 +5,8 @@ FROM mcr.microsoft.com/playwright:v1.22.0-focal
   
   RUN rm /bin/sh && ln -s /bin/bash /bin/sh
 
+  RUN ln -sf /usr/share/zoneinfo/Asia/Seoul /etc/localtime
+
   RUN mkdir /usr/local/nvm
   ENV NVM_DIR /usr/local/nvm
 

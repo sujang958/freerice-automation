@@ -1,4 +1,4 @@
-import { errors, webkit } from "playwright"
+import { webkit } from "playwright"
 import Log4js from "log4js"
 import { config } from "dotenv"
 import { EventEmitter } from "stream"
@@ -26,6 +26,11 @@ const run = async () => {
     logger.info("Restarting for error")
     run()
     await browser.close()
+  })
+
+  page.on("domcontentloaded", async (page) => {
+    await page.click("div.close-button.clickable")
+    logger.info("Closed a popup")
   })
 
   await page.goto("https://freerice.com/profile-login")
@@ -68,7 +73,7 @@ const run = async () => {
   }
 }
 
-console.log("Starting a automation", Date.toString())
+console.log("Starting a automation", (new Date()).toLocaleString())
 
 run()
 

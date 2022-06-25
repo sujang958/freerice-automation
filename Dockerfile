@@ -14,7 +14,7 @@ FROM mcr.microsoft.com/playwright:v1.22.0-focal
   RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash
   RUN source $NVM_DIR/nvm.sh && nvm install v18.3.0 && npm i -g yarn pm2
 
-  COPY app.ts package.json yarn.lock tsconfig.json .env /freerice/
+  COPY bootstrap.sh app.ts package.json yarn.lock tsconfig.json .env /freerice/
 
   RUN cd /freerice && yarn && yarn build
 
@@ -22,4 +22,4 @@ FROM mcr.microsoft.com/playwright:v1.22.0-focal
 
   CMD pm2-runtime start /freerice/dist/app.js
 
-  RUN while true; do sleep 1000; done
+  CMD ["/freerice/bootstrap.sh", "-d"]

@@ -29,6 +29,7 @@ const run = async () => {
   })
 
   page.on("domcontentloaded", async (page) => {
+    if (!(await page.isVisible("div.closed-button.clickable"))) return
     await page.click("div.close-button.clickable")
     logger.info("Closed a popup")
   })
@@ -73,7 +74,7 @@ const run = async () => {
   }
 }
 
-console.log("Starting a automation", (new Date()).toLocaleString())
+console.log("Starting a automation", new Date().toLocaleString())
 
 run()
 

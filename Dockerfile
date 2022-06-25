@@ -20,4 +20,4 @@ FROM mcr.microsoft.com/playwright:v1.22.0-focal
 
   ENV NODE_ENV=production
 
-  RUN cd /freerice/ && yarn && pm2 start ./app.js --name=app1
+  RUN cd /freerice/ && yarn && node ./app.js

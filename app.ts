@@ -25,6 +25,7 @@ const run = async () => {
   errorRestartEmitter.once("error", async () => {
     logger.info("Restarting for error")
     run()
+    await page.screenshot({ type: "png", path: `${Date.now()}.png` })
     await browser.close()
   })
 
@@ -46,7 +47,7 @@ const run = async () => {
     page.waitForSelector("#login-password"),
   ])
 
-  await page.type("#login-username", process.env.USER_NAME ?? "")
+  await page.fill("#login-username", process.env.USER_NAME ?? "")
   await page.fill("#login-password", process.env.USER_PW ?? "")
   await page.click("button.user-login-submit")
 

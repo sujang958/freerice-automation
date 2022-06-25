@@ -12,12 +12,12 @@ FROM mcr.microsoft.com/playwright:v1.22.0-focal
 
   # Install nvm
   RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash
-  RUN source $NVM_DIR/nvm.sh && nvm install v18.3.0 && npm i -g yarn
+  RUN source $NVM_DIR/nvm.sh && nvm install v18.3.0 && npm i -g yarn pm2
 
-  COPY package.json /freerice/package.json
-  COPY dist/app.js /freerice/app.js
-  COPY .env /freerice/.env
+  COPY app.ts package.json yarn.lock tsconfig.json .env /freerice/
+
+  RUN yarn && yarn build
 
   ENV NODE_ENV=production
 
-  RUN cd /freerice/ && yarn && node ./app.js
+  RUN ["pm2", "start", "/freerice/dist/app.js"]

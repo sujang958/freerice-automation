@@ -16,7 +16,7 @@ FROM mcr.microsoft.com/playwright:v1.22.0-focal
 
   COPY app.ts package.json yarn.lock tsconfig.json .env /freerice/
 
-  RUN yarn && yarn build
+  RUN cd /freerice && yarn && yarn build
 
   ENV NODE_ENV=production
 

@@ -31,7 +31,7 @@ const run = async () => {
 
   const closingPopupInterval = setInterval(async () => {
     if (!(await page.isVisible(".close-button.clickable"))) return
-    await page.click(".close-button.clickable")
+    await page.$eval(".close-button.clickable", (ele: any) => ele.click())
     logger.info("Closed a popup")
   }, 800)
 

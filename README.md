@@ -1,6 +1,6 @@
 # Freerice Automation
 
-> Version Requirements  
+> Requirements  
 - Docker v20.10.14
 
 > Getting started

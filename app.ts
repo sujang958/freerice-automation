@@ -25,7 +25,6 @@ const run = async () => {
   errorRestartEmitter.once("error", async () => {
     logger.info("Restarting for error")
     run()
-    await page.screenshot({ type: "png", path: `${Date.now()}.png` })
     await browser.close()
   })
 

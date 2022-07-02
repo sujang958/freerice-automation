@@ -38,6 +38,10 @@ const run = async () => {
     clearInterval(closingPopupInterval)
   })
 
+  process.on("beforeExit", () => {
+    browser.close()
+  })
+
   await page.goto("https://freerice.com/profile-login")
   await page.waitForLoadState("domcontentloaded")
 

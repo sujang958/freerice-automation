@@ -56,24 +56,37 @@ const run = async () => {
 
   logger.info(`Logined as ${process.env.USER_NAME}`)
 
-  await page.goto("https://freerice.com/categories/english-grammar")
+  await page.goto("https://freerice.com/categories/multiplication-table")
   await page.waitForSelector(
     "div.fade-appear-done:nth-child(2) > div:nth-child(1)"
   )
   await page.waitForTimeout(500)
 
   while (true) {
-    await page.click(
-      "div.fade-appear-done:nth-child(2) > div:nth-child(1)", //
-      {
-        timeout: 1000 * 12,
-      }
+    const toCalculate = await page.$(".card-title")
+    if (!toCalculate) continue
+
+    const content = await toCalculate.innerText()
+    const [multiply1, multiply2] = content.split(" x ")
+    const answer = Number(multiply1) * Number(multiply2)
+    const selections = await page.$$(
+      `div.fade-appear-done > div:text("${answer}")`
     )
+    if (!selections) continue
+    const selection = selections.find(
+      async (selection) =>
+        Number((await selection.innerText()).trim()) == answer
+    )
+    if (!selection) continue
+
+    await selection.click()
+    logger.info("Clicked")
     await page.waitForSelector(
-      "div.fade-appear-done:nth-child(2) > div:nth-child(1)"
+      ".card-box.first-card.question-card-enter.question-card-enter-active"
     )
     await page.waitForTimeout(100)
-    logger.info("Clicked")
+    await page.waitForSelector(".card-box.question-card-enter-done")
+    console.log("Loop")
   }
 }
 

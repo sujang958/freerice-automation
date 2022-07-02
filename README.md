@@ -3,7 +3,7 @@
 > Requirements  
 - Docker v20.10.14
 
-> Getting started
+## Getting started
 
 1. Clone this repository  
 2. Write .env file according to the format below

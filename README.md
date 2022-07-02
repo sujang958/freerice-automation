@@ -5,7 +5,7 @@
 
 > Getting started
 
-1. Push this repository  
+1. Clone this repository  
 2. Write .env file according to the format below
 ```env
 USER_NAME = 

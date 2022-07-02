@@ -6,7 +6,7 @@
 > Getting started
 
 1. Pull this repository  
-2. Write .env file according to format below
+2. Write .env file according to the format below
 ```env
 USER_NAME = 
 USER_PW = 

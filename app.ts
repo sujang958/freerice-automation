@@ -42,7 +42,7 @@ const run = async () => {
     browser.close()
   })
 
-  await page.goto("https://freerice.com/profile-login")
+  await page.goto("https://play.freerice.com/profile-login")
   await page.waitForLoadState("domcontentloaded")
 
   await Promise.all([
@@ -59,7 +59,7 @@ const run = async () => {
 
   logger.info(`Logined as ${process.env.USER_NAME}`)
 
-  await page.goto("https://freerice.com/categories/multiplication-table")
+  await page.goto("https://play.freerice.com/categories/multiplication-table")
   await page.waitForSelector(
     "div.fade-appear-done:nth-child(2) > div:nth-child(1)"
   )
@@ -89,11 +89,10 @@ const run = async () => {
     )
     await page.waitForTimeout(100)
     await page.waitForSelector(".card-box.question-card-enter-done")
-    console.log("Loop")
   }
 }
 
-console.log("Starting a automation", new Date().toLocaleString())
+console.log("Starting an automation", new Date().toLocaleString())
 
 run()
 

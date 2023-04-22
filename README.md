@@ -1,15 +1,15 @@
 # Freerice Automation
 
 > Requirements  
-- Docker v20.10.14
+- Docker v20.10.14 or higher
 
 ## Getting started
 
 1. Clone this repository  
 2. Write a .env file in accordance with the following format
 ```env
-USER_NAME = 
-USER_PW = 
+USER_NAME=
+USER_PW=
 ```
 3. Build a docker container
 ```sh

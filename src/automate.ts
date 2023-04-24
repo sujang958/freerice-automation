@@ -1,37 +1,30 @@
-import { webkit } from "playwright"
-import Log4js from "log4js"
-import { config } from "dotenv"
-import { EventEmitter } from "stream"
+import { Browser, Page } from "playwright"
+import { logger } from "./logger"
 
-config()
+const getProgress = async (page: Page) => {
+  const progress = await page.$(
+    "div.block:nth-child(1) > div:nth-child(2) > p:nth-child(1) > strong:nth-child(2)"
+  )
 
-const errorRestartEmitter = new EventEmitter()
+  if (!progress) return null
 
-Log4js.configure({
-  appenders: { log: { type: "file", filename: "run.log" } },
-  categories: { default: { appenders: ["log"], level: "all" } },
-})
+  const progressAsNumber = Number(progress.innerText())
 
-const logger = Log4js.getLogger("log")
+  return isNaN(progressAsNumber) ? null : progressAsNumber
+}
 
-const run = async () => {
-  const browser = await webkit.launch({
-    headless: process.env.NODE_ENV === "production" ? true : false,
-  })
+export const automate = async (browser: Browser) => {
   const page = await browser.newPage({ ignoreHTTPSErrors: true })
 
-  logger.info("Started a browser and page")
-
-  errorRestartEmitter.once("error", async () => {
-    logger.info("Restarting for error")
-    run()
-    await browser.close()
-  })
+  logger.info("Created a new page")
 
   const closingPopupInterval = setInterval(async () => {
-    if (!(await page.isVisible(".close-button.clickable"))) return
-    await page.$eval(".close-button.clickable", (ele: any) => ele.click())
-    logger.info("Closed a popup")
+    try {
+      await page.$eval(".close-button.clickable", (ele: any) => ele.click())
+      logger.info("Closed a popup")
+    } catch (e) {
+      logger.error(e)
+    }
   }, 800)
 
   process.on("beforeExit", () => {
@@ -83,21 +76,18 @@ const run = async () => {
     if (!selection) continue
 
     await selection.click()
+
     logger.info("Clicked")
+
     await page.waitForSelector(
       ".card-box.first-card.question-card-enter.question-card-enter-active"
     )
-    await page.waitForTimeout(100)
+    await page.waitForTimeout(300)
+
+    getProgress(page).then((progress) => {
+      logger.info(`donated rices so far: ${progress}`)
+    })
+
     await page.waitForSelector(".card-box.question-card-enter-done")
   }
 }
-
-console.log("Starting an automation", new Date().toLocaleString())
-
-run()
-
-process.on("uncaughtException", (error) => {
-  errorRestartEmitter.emit("error")
-  console.log(error)
-  logger.error(`${error.name} - ${error.message}`)
-})

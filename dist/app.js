@@ -16,6 +16,7 @@ const playwright_1 = require("playwright");
 const log4js_1 = __importDefault(require("log4js"));
 const dotenv_1 = require("dotenv");
 const stream_1 = require("stream");
+const automate_1 = require("./automate");
 (0, dotenv_1.config)();
 const errorRestartEmitter = new stream_1.EventEmitter();
 log4js_1.default.configure({
@@ -24,42 +25,20 @@ log4js_1.default.configure({
 });
 const logger = log4js_1.default.getLogger("log");
 const run = () => __awaiter(void 0, void 0, void 0, function* () {
-    var _a, _b;
     const browser = yield playwright_1.webkit.launch({
         headless: process.env.NODE_ENV === "production" ? true : false,
     });
-    const page = yield browser.newPage({ ignoreHTTPSErrors: true });
+    logger.info("Opened a browser");
     errorRestartEmitter.once("error", () => __awaiter(void 0, void 0, void 0, function* () {
-        yield browser.close();
+        logger.info("Restarting for an error");
         run();
-        logger.info("Restarted for error");
+        yield browser.close();
     }));
-    yield page.goto("https://freerice.com/profile-login");
-    yield page.waitForLoadState("domcontentloaded");
-    yield Promise.all([
-        page.waitForSelector("#login-username"),
-        page.waitForSelector("#login-password"),
-    ]);
-    yield page.type("#login-username", (_a = process.env.USER_NAME) !== null && _a !== void 0 ? _a : "");
-    yield page.fill("#login-password", (_b = process.env.USER_PW) !== null && _b !== void 0 ? _b : "");
-    yield page.click("#root > section > div > div:nth-child(1) > div > div.page__body > div > div > div:nth-child(5) > button");
-    yield page.waitForSelector(`text=${process.env.USER_NAME}`);
-    yield page.waitForTimeout(1000); // For safety
-    logger.info(`Logined as ${process.env.USER_NAME}`);
-    yield page.goto("https://freerice.com/categories/english-grammar");
-    yield page.waitForSelector("div.fade-appear-done:nth-child(2) > div:nth-child(1)");
-    yield page.waitForTimeout(500);
-    while (true) {
-        yield page.click("div.fade-appear-done:nth-child(2) > div:nth-child(1)", //
-        {
-            timeout: 1000 * 5,
-        });
-        yield page.waitForSelector("div.fade-appear-done:nth-child(2) > div:nth-child(1)");
-        yield page.waitForTimeout(100);
-        logger.info("Clicked");
+    for (let i = 0; i < 4; i++) {
+        (0, automate_1.automate)(browser);
     }
 });
-console.log("Starting a automation");
+console.log("Starting an automation", new Date().toLocaleString());
 run();
 process.on("uncaughtException", (error) => {
     errorRestartEmitter.emit("error");

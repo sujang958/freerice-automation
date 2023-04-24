@@ -8,7 +8,7 @@ const getProgress = async (page: Page) => {
 
   if (!progress) return null
 
-  const progressAsNumber = Number(progress.innerText())
+  const progressAsNumber = Number((await progress.innerText()).replace(/,/gi, ""))
 
   return isNaN(progressAsNumber) ? null : progressAsNumber
 }
@@ -85,7 +85,7 @@ export const automate = async (browser: Browser) => {
     await page.waitForTimeout(300)
 
     getProgress(page).then((progress) => {
-      logger.info(`donated rices so far: ${progress}`)
+      logger.info(`donated rices so far: ${progress?.toLocaleString()}`)
     })
 
     await page.waitForSelector(".card-box.question-card-enter-done")

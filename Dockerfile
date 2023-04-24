@@ -16,7 +16,7 @@ FROM mcr.microsoft.com/playwright:v1.22.0-focal
 
   WORKDIR /freerice/
 
-  COPY app.ts package.json yarn.lock tsconfig.json .env ./
+  COPY src package.json yarn.lock tsconfig.json .env ./
 
   RUN yarn && yarn build
 

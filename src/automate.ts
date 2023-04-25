@@ -47,8 +47,8 @@ export const automate = async (browser: Browser) => {
   await page.fill("#login-password", process.env.USER_PW ?? "")
   await page.click("button.user-login-submit")
 
-  await page.waitForSelector(`text=${process.env.USER_NAME}`)
-  await page.waitForTimeout(1000) // For safety
+  await page.waitForSelector(`.sign-out`)
+  await page.waitForTimeout(1000)
 
   logger.info(`Logined as ${process.env.USER_NAME}`)
 

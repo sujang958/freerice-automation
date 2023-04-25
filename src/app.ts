@@ -27,7 +27,7 @@ const run = async () => {
     await browser.close()
   })
 
-  for (let i = 0; i < 4; i++) {
+  for (let i = 0; i < 6; i++) {
     automate(browser)
   }
 }
@@ -40,4 +40,8 @@ process.on("uncaughtException", (error) => {
   errorRestartEmitter.emit("error")
   console.log(error)
   logger.error(`${error.name} - ${error.message}`)
+})
+
+process.on("unhandledRejection", (error) => {
+  logger.error(error)
 })

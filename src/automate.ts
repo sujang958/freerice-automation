@@ -8,7 +8,9 @@ const getProgress = async (page: Page) => {
 
   if (!progress) return null
 
-  const progressAsNumber = Number((await progress.innerText()).replace(/,/gi, ""))
+  const progressAsNumber = Number(
+    (await progress.innerText()).replace(/,/gi, "")
+  )
 
   return isNaN(progressAsNumber) ? null : progressAsNumber
 }
@@ -22,9 +24,7 @@ export const automate = async (browser: Browser) => {
     try {
       await page.$eval(".close-button.clickable", (ele: any) => ele.click())
       logger.info("Closed a popup")
-    } catch (e) {
-      logger.error(e)
-    }
+    } catch (e) {}
   }, 800)
 
   process.on("beforeExit", () => {
@@ -57,6 +57,22 @@ export const automate = async (browser: Browser) => {
     "div.fade-appear-done:nth-child(2) > div:nth-child(1)"
   )
   await page.waitForTimeout(500)
+
+  let previousProgress: null | number = null
+  setInterval(async () => {
+    if (!previousProgress) {
+      previousProgress = await getProgress(page)
+
+      return
+    }
+    const progress = await getProgress(page)
+
+    if (!progress) return logger.info("Can't get progress")
+
+    console.log((progress - previousProgress) / 10)
+
+    logger.info(`${(progress - previousProgress) / 10} grains / sec`)
+  }, 10000)
 
   while (true) {
     const toCalculate = await page.$(".card-title")

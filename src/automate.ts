@@ -74,6 +74,8 @@ export const automate = async (browser: Browser) => {
     console.log((progress - previousProgress) / 10)
 
     logger.info(`${(progress - previousProgress) / 10} grains / sec`)
+
+    previousProgress = progress
   }, 10000)
 
   while (true) {

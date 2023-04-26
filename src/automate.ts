@@ -102,12 +102,12 @@ export const automate = async (browser: Browser) => {
     await page.waitForSelector(
       ".card-box.first-card.question-card-enter.question-card-enter-active"
     )
-    await page.waitForTimeout(300)
+    await page.waitForSelector(".card-box.question-card-enter-done")
 
     getProgress(page).then((progress) => {
       logger.info(`donated rices so far: ${progress?.toLocaleString()}`)
     })
 
-    await page.waitForSelector(".card-box.question-card-enter-done")
+    await page.waitForTimeout(300)
   }
 }

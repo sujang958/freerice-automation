@@ -24,8 +24,10 @@ export const automate = async (browser: Browser) => {
     try {
       await page.$eval(".close-button.clickable", (ele: any) => ele.click())
       logger.info("Closed a popup")
-    } catch (e) {}
-  }, 800)
+    } catch (e) {
+      logger.error(e)
+    }
+  }, 3000)
 
   process.on("beforeExit", () => {
     clearInterval(closingPopupInterval)

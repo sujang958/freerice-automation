@@ -15,10 +15,10 @@ const getProgress = async (page: Page) => {
   return isNaN(progressAsNumber) ? null : progressAsNumber
 }
 
-export const automate = async (browser: Browser) => {
+export const automate = async (browser: Browser, id: string, pw: string) => {
   const page = await browser.newPage({ ignoreHTTPSErrors: true })
 
-  logger.info("Created a new page")
+  logger.info(`[${id}] Created a new page`)
 
   const closingPopupInterval = setInterval(async () => {
     try {
@@ -45,14 +45,14 @@ export const automate = async (browser: Browser) => {
     page.waitForSelector("#login-password"),
   ])
 
-  await page.fill("#login-username", process.env.USER_NAME ?? "")
-  await page.fill("#login-password", process.env.USER_PW ?? "")
+  await page.fill("#login-username", id ?? "")
+  await page.fill("#login-password", pw ?? "")
   await page.click("button.user-login-submit")
 
   await page.waitForSelector(`.sign-out`)
   await page.waitForTimeout(1000)
 
-  logger.info(`Logined as ${process.env.USER_NAME}`)
+  logger.info(`Logined as ${id}`)
 
   await page.goto("https://play.freerice.com/categories/multiplication-table")
   await page.waitForSelector(
@@ -71,9 +71,7 @@ export const automate = async (browser: Browser) => {
 
     if (!progress) return logger.info("Can't get progress")
 
-    console.log((progress - previousProgress) / 10)
-
-    logger.info(`${(progress - previousProgress) / 10} grains / sec`)
+    logger.info(`[${id}] ${(progress - previousProgress) / 10} grains / sec`)
 
     previousProgress = progress
   }, 10000)
@@ -97,7 +95,7 @@ export const automate = async (browser: Browser) => {
 
     await selection.click()
 
-    logger.info("Clicked")
+    logger.info(`[${id}] Clicked`)
 
     await page.waitForSelector(
       ".card-box.first-card.question-card-enter.question-card-enter-active"
@@ -105,7 +103,7 @@ export const automate = async (browser: Browser) => {
     await page.waitForSelector(".card-box.question-card-enter-done")
 
     getProgress(page).then((progress) => {
-      logger.info(`donated rices so far: ${progress?.toLocaleString()}`)
+      logger.info(`[${id}] donated rices so far: ${progress?.toLocaleString()}`)
     })
 
     await page.waitForTimeout(300)

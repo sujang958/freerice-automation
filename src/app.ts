@@ -6,6 +6,25 @@ import { automate } from "./automate"
 
 config()
 
+const USER_PREFIX = "FR_USER_"
+const PW_PREFIX = "FR_PW_"
+
+const userKeys = Object.entries(process.env)
+  .filter(([key]) => key.startsWith(USER_PREFIX))
+  .map(([key, value]) => ({
+    key: key.replace(USER_PREFIX, ""),
+    name: value,
+  }))
+  .filter(({ name }) => name)
+
+const users = new Map<string, string>()
+for (const { key, name } of userKeys) {
+  const pw = process.env[`${PW_PREFIX}${key}`]
+  if (!pw || !name) throw new Error(`Password not found for ${key}`)
+  users.set(name, pw)
+}
+console.log(users.entries())
+
 const errorRestartEmitter = new EventEmitter()
 
 Log4js.configure({
@@ -27,8 +46,10 @@ const run = async () => {
     await browser.close()
   })
 
-  for (let i = 0; i < 6; i++) {
-    automate(browser)
+  for (const [id, pw] of users.entries()) {
+    for (let i = 0; i < 4; i++) {
+      automate(browser, id, pw)
+    }
   }
 }
 

@@ -36,13 +36,12 @@ console.log("Starting an automation", new Date().toLocaleString())
 
 run()
 
-process.on("uncaughtException", (error) => {
+const handleError = (e: any) => {
   errorRestartEmitter.emit("error")
-  console.log(error)
-  logger.error(`${error.name} - ${error.message}`)
-})
+  console.log(e)
+  logger.error(e)
+}
 
-process.on("unhandledRejection", (error) => {
-  console.log(error)
-  logger.error(error)
-})
+process.on("uncaughtException", handleError)
+
+process.on("unhandledRejection", handleError)

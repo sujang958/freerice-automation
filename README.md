@@ -8,8 +8,10 @@
 1. Clone this repository  
 2. Write a .env file in accordance with the following format
 ```env
-USER_NAME=
-USER_PW=
+FR_USER_1=
+FR_PW_1=
+FR_USER_2=
+FR_PW_2=
 ```
 3. Build a docker container
 ```sh

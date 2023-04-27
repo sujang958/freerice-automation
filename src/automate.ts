@@ -1,4 +1,4 @@
-import { Browser, Page } from "playwright"
+import { Browser, BrowserContext, Page } from "playwright"
 import { logger } from "./logger"
 
 const getProgress = async (page: Page) => {
@@ -15,8 +15,9 @@ const getProgress = async (page: Page) => {
   return isNaN(progressAsNumber) ? null : progressAsNumber
 }
 
-export const automate = async (browser: Browser, id: string, pw: string) => {
-  const page = await browser.newPage({ ignoreHTTPSErrors: true })
+export const automate = async (context: BrowserContext, id: string, pw: string) => {
+  
+  const page = await context.newPage()
 
   logger.info(`[${id}] Created a new page`)
 
@@ -34,7 +35,7 @@ export const automate = async (browser: Browser, id: string, pw: string) => {
   })
 
   process.on("beforeExit", () => {
-    browser.close()
+    context.close()
   })
 
   await page.goto("https://play.freerice.com/profile-login")

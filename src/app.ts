@@ -46,8 +46,9 @@ const run = async () => {
   })
 
   for (const [id, pw] of users.entries()) {
+    const context = await browser.newContext()
     for (let i = 0; i < 4; i++) {
-      automate(browser, id, pw)
+      automate(context, id, pw)
     }
   }
 }

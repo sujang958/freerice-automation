@@ -40,13 +40,8 @@ export const automate = async (browser: Browser, id: string, pw: string) => {
   await page.goto("https://play.freerice.com/profile-login")
   await page.waitForLoadState("domcontentloaded")
 
-  await Promise.all([
-    page.waitForSelector("#login-username"),
-    page.waitForSelector("#login-password"),
-  ])
-
-  await page.fill("#login-username", id ?? "")
-  await page.fill("#login-password", pw ?? "")
+  await page.fill("#login-username", id)
+  await page.fill("#login-password", pw)
   await page.click("button.user-login-submit")
 
   await page.waitForSelector(`.sign-out`)
@@ -76,36 +71,43 @@ export const automate = async (browser: Browser, id: string, pw: string) => {
     previousProgress = progress
   }, 10000)
 
-  while (true) {
-    const toCalculate = await page.$(".card-title")
-    if (!toCalculate) continue
+  try {
+    while (true) {
+      const toCalculate = await page.$(".card-title")
+      if (!toCalculate) continue
 
-    const content = await toCalculate.innerText()
-    const [multiply1, multiply2] = content.split(" x ")
-    const answer = Number(multiply1) * Number(multiply2)
-    const selections = await page.$$(
-      `div.fade-appear-done > div:text("${answer}")`
-    )
-    if (!selections) continue
-    const selection = selections.find(
-      async (selection) =>
-        Number((await selection.innerText()).trim()) == answer
-    )
-    if (!selection) continue
+      const content = await toCalculate.innerText()
+      const [multiply1, multiply2] = content.split(" x ")
+      const answer = Number(multiply1) * Number(multiply2)
+      const selections = await page.$$(
+        `div.fade-appear-done > div:text("${answer}")`
+      )
+      if (!selections) continue
+      const selection = selections.find(
+        async (selection) =>
+          Number((await selection.innerText()).trim()) == answer
+      )
+      if (!selection) continue
 
-    await selection.click()
+      await selection.click()
 
-    logger.info(`[${id}] Clicked`)
+      logger.info(`[${id}] Clicked`)
 
-    await page.waitForSelector(
-      ".card-box.first-card.question-card-enter.question-card-enter-active"
-    )
-    await page.waitForSelector(".card-box.question-card-enter-done")
+      await page.waitForSelector(
+        ".card-box.first-card.question-card-enter.question-card-enter-active"
+      )
+      await page.waitForSelector(".card-box.question-card-enter-done")
 
-    getProgress(page).then((progress) => {
-      logger.info(`[${id}] donated rices so far: ${progress?.toLocaleString()}`)
-    })
+      getProgress(page).then((progress) => {
+        logger.info(
+          `[${id}] donated rices so far: ${progress?.toLocaleString()}`
+        )
+      })
 
-    await page.waitForTimeout(300)
+      await page.waitForTimeout(300)
+    }
+  } catch (e) {
+    page.screenshot({ path: `./error-ss.png` })
+    throw e
   }
 }

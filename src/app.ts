@@ -23,7 +23,6 @@ for (const { key, name } of userKeys) {
   if (!pw || !name) throw new Error(`Password not found for ${key}`)
   users.set(name, pw)
 }
-console.log(users.entries())
 
 const errorRestartEmitter = new EventEmitter()
 

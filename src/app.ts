@@ -1,4 +1,4 @@
-import { Page, webkit } from "playwright"
+import { webkit } from "playwright"
 import Log4js from "log4js"
 import { config } from "dotenv"
 import { EventEmitter } from "stream"

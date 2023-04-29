@@ -6,6 +6,9 @@ import { automate } from "./automate"
 
 config()
 
+const INSTANCES = isNaN(Number(process.env.FR_INSTANCES))
+  ? 1
+  : Number(process.env.FR_INSTANCES)
 const USER_PREFIX = "FR_USER_"
 const PW_PREFIX = "FR_PW_"
 
@@ -24,7 +27,7 @@ for (const { key, name } of userKeys) {
   users.set(name, pw)
 }
 
-const errorRestartEmitter = new EventEmitter()
+console.log("Loaded", users.size, `user${users.size != 1 ? "s" : ""}:`, Array.from(users.keys()).join(", "))
 
 Log4js.configure({
   appenders: { log: { type: "file", filename: "run.log" } },
@@ -39,15 +42,9 @@ const run = async () => {
   })
   logger.info("Opened a browser")
 
-  errorRestartEmitter.once("error", async () => {
-    logger.info("Restarting for an error")
-    run()
-    await browser.close()
-  })
-
   for (const [id, pw] of users.entries()) {
     const context = await browser.newContext()
-    for (let i = 0; i < 4; i++) {
+    for (let i = 0; i < INSTANCES; i++) {
       automate(context, id, pw)
     }
   }
@@ -58,7 +55,6 @@ console.log("Starting an automation", new Date().toLocaleString())
 run()
 
 const handleError = (e: any) => {
-  errorRestartEmitter.emit("error")
   console.log(e)
   logger.error(e)
 }

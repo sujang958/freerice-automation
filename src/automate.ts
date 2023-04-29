@@ -15,24 +15,14 @@ const getProgress = async (page: Page) => {
   return isNaN(progressAsNumber) ? null : progressAsNumber
 }
 
-export const automate = async (context: BrowserContext, id: string, pw: string) => {
-  
+export const automate = async (
+  context: BrowserContext,
+  id: string,
+  pw: string
+) => {
   const page = await context.newPage()
 
   logger.info(`[${id}] Created a new page`)
-
-  const closingPopupInterval = setInterval(async () => {
-    try {
-      await page.$eval(".close-button.clickable", (ele: any) => ele.click())
-      logger.info("Closed a popup")
-    } catch (e) {
-      logger.error(e)
-    }
-  }, 3000)
-
-  process.on("beforeExit", () => {
-    clearInterval(closingPopupInterval)
-  })
 
   process.on("beforeExit", () => {
     context.close()
@@ -74,6 +64,18 @@ export const automate = async (context: BrowserContext, id: string, pw: string) 
     previousProgress = progress
   }, 10000)
 
+  setInterval(async () => {
+    try {
+      const visible = await page.isVisible(".close-button.clickable")
+      if (!visible) return
+
+      await page.click(".close-button.clickable")
+      logger.info("Closed a popup")
+    } catch (e) {
+      logger.error(e)
+    }
+  }, 10000)
+
   while (true) {
     const toCalculate = await page.$(".card-title")
     if (!toCalculate) continue
@@ -100,9 +102,13 @@ export const automate = async (context: BrowserContext, id: string, pw: string) 
     )
     await page.waitForSelector(".card-box.question-card-enter-done")
 
-    getProgress(page).then((progress) => {
-      logger.info(`[${id}] donated rices so far: ${progress?.toLocaleString()}`)
-    })
+    getProgress(page)
+      .then((progress) => {
+        logger.info(
+          `[${id}] donated rices so far: ${progress?.toLocaleString()}`
+        )
+      })
+      .catch(() => console.log("Failed getting the progress of", id))
 
     await page.waitForTimeout(300)
   }
